@@ -5,56 +5,117 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>M&K Journal</title>
 
+  <!-- Cozy Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@400;500;600&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
+
   <style>
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #f6f5f2;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(180deg, #fbf7f2, #f1ebe2);
       margin: 0;
       padding: 16px;
-      color: #222;
+      color: #3a332d;
     }
 
     h1 {
+      font-family: 'Playfair Display', serif;
       text-align: center;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
+      color: #4a3f35;
+      letter-spacing: 0.6px;
     }
 
     .verse {
       text-align: center;
       font-style: italic;
-      color: #555;
-      margin-bottom: 20px;
-      line-height: 1.5;
+      color: #7a6f66;
+      margin-bottom: 24px;
+      line-height: 1.6;
+      font-size: 15px;
     }
 
     .day {
-      background: #ffffff;
-      border-radius: 14px;
+      background: #fffdf9;
+      border-radius: 18px;
       padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      margin-bottom: 18px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      border-left: 5px solid #d6c6b5;
+    }
+
+    .day h3 {
+      font-family: 'Playfair Display', serif;
+      margin: 0 0 6px;
+      color: #5b4a3b;
     }
 
     .reading {
-      font-weight: 600;
-      margin-bottom: 10px;
+      font-family: 'Caveat', cursive;
+      font-size: 20px;
+      margin-bottom: 12px;
+      color: #8a6f55;
     }
 
     label {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       font-size: 15px;
+      margin-bottom: 6px;
+    }
+
+    input[type="checkbox"] {
+      transform: scale(1.2);
+      accent-color: #b08a65;
     }
 
     textarea {
       width: 100%;
       margin-top: 10px;
-      padding: 12px;
-      border-radius: 10px;
-      border: 1px solid #ccc;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid #e1d6ca;
       font-size: 14px;
       resize: vertical;
+      font-family: 'Inter', sans-serif;
+      background: #fdfbf7;
+      color: #3a332d;
+    }
+
+    textarea::placeholder {
+      color: #b0a295;
+      font-style: italic;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: #c2a383;
+      background: #ffffff;
+    }
+
+    #saveBtn {
+      background: linear-gradient(135deg, #c2a383, #a88768);
+      box-shadow: 0 6px 18px rgba(168,135,104,0.45);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      font-family: 'Inter', sans-serif;
+      padding: 10px 18px;
+      font-size: 15px;
+      border-radius: 20px;
+      border: none;
+      color: white;
+      font-weight: 600;
+    }
+
+    #saveBtn:active {
+      transform: scale(0.96);
+      box-shadow: 0 3px 10px rgba(168,135,104,0.35);
+    }
+
+    #saveStatus {
+      font-weight: 500;
+      color: #6d8b6a;
+      margin-top: 8px;
+      display: none;
     }
   </style>
 </head>
@@ -68,26 +129,8 @@
   </div>
 
   <div style="text-align:center; margin-bottom: 20px;">
-    <button id="saveBtn" style="
-      padding: 10px 18px;
-      font-size: 15px;
-      border-radius: 20px;
-      border: none;
-      background: #4a6cf7;
-      color: white;
-      font-weight: 600;
-    ">
-      💾 Save Progress
-    </button>
-
-    <div id="saveStatus" style="
-      margin-top: 8px;
-      font-size: 14px;
-      color: #2e7d32;
-      display: none;
-    ">
-      Saved ✓
-    </div>
+    <button id="saveBtn">💾 Save Progress</button>
+    <div id="saveStatus">Saved ✓</div>
   </div>
 
   <div id="days"></div>
@@ -123,8 +166,8 @@
 
     readings.forEach((reading, index) => {
       const day = index + 1;
-      const checked = localStorage.getItem(day${day}-done) === "true";
-      const note = localStorage.getItem(day${day}-note) || "";
+      const checked = localStorage.getItem(`day${day}-done`) === "true";
+      const note = localStorage.getItem(`day${day}-note`) || "";
 
       const div = document.createElement("div");
       div.className = "day";
@@ -145,24 +188,23 @@
       const textarea = div.querySelector("textarea");
 
       checkbox.addEventListener("change", () => {
-        localStorage.setItem(day${day}-done, checkbox.checked);
+        localStorage.setItem(`day${day}-done`, checkbox.checked);
       });
 
       textarea.addEventListener("input", () => {
-        localStorage.setItem(day${day}-note, textarea.value);
+        localStorage.setItem(`day${day}-note`, textarea.value);
       });
 
       container.appendChild(div);
     });
 
-    // SAVE BUTTON LOGIC (correct place)
     document.getElementById("saveBtn").addEventListener("click", () => {
       document.querySelectorAll("input[type='checkbox']").forEach(cb => {
-        localStorage.setItem(day${cb.dataset.day}-done, cb.checked);
+        localStorage.setItem(`day${cb.dataset.day}-done`, cb.checked);
       });
 
       document.querySelectorAll("textarea").forEach(area => {
-        localStorage.setItem(day${area.dataset.day}-note, area.value);
+        localStorage.setItem(`day${area.dataset.day}-note`, area.value);
       });
 
       const status = document.getElementById("saveStatus");
