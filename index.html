@@ -123,8 +123,8 @@
 
     readings.forEach((reading, index) => {
       const day = index + 1;
-      const checked = localStorage.getItem(`day${day}-done`) === "true";
-      const note = localStorage.getItem(`day${day}-note`) || "";
+      const checked = localStorage.getItem(day${day}-done) === "true";
+      const note = localStorage.getItem(day${day}-note) || "";
 
       const div = document.createElement("div");
       div.className = "day";
@@ -145,11 +145,11 @@
       const textarea = div.querySelector("textarea");
 
       checkbox.addEventListener("change", () => {
-        localStorage.setItem(`day${day}-done`, checkbox.checked);
+        localStorage.setItem(day${day}-done, checkbox.checked);
       });
 
       textarea.addEventListener("input", () => {
-        localStorage.setItem(`day${day}-note`, textarea.value);
+        localStorage.setItem(day${day}-note, textarea.value);
       });
 
       container.appendChild(div);
@@ -158,11 +158,11 @@
     // SAVE BUTTON LOGIC (correct place)
     document.getElementById("saveBtn").addEventListener("click", () => {
       document.querySelectorAll("input[type='checkbox']").forEach(cb => {
-        localStorage.setItem(`day${cb.dataset.day}-done`, cb.checked);
+        localStorage.setItem(day${cb.dataset.day}-done, cb.checked);
       });
 
       document.querySelectorAll("textarea").forEach(area => {
-        localStorage.setItem(`day${area.dataset.day}-note`, area.value);
+        localStorage.setItem(day${area.dataset.day}-note, area.value);
       });
 
       const status = document.getElementById("saveStatus");
