@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>M&K Journal</title>
 
-  <!-- Cozy Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@400;500;600&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
 
   <style>
@@ -15,6 +14,7 @@
       margin: 0;
       padding: 16px;
       color: #3a332d;
+      line-height: 1.5;
     }
 
     h1 {
@@ -32,6 +32,7 @@
       margin-bottom: 24px;
       line-height: 1.6;
       font-size: 15px;
+      padding: 0 10px;
     }
 
     .day {
@@ -39,7 +40,7 @@
       border-radius: 18px;
       padding: 16px;
       margin-bottom: 18px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
       border-left: 5px solid #d6c6b5;
     }
 
@@ -51,7 +52,7 @@
 
     .reading {
       font-family: 'Caveat', cursive;
-      font-size: 20px;
+      font-size: 22px;
       margin-bottom: 12px;
       color: #8a6f55;
     }
@@ -61,16 +62,20 @@
       align-items: center;
       gap: 10px;
       font-size: 15px;
-      margin-bottom: 6px;
+      margin-bottom: 10px;
+      cursor: pointer;
     }
 
     input[type="checkbox"] {
-      transform: scale(1.2);
+      width: 18px;
+      height: 18px;
       accent-color: #b08a65;
+      cursor: pointer;
     }
 
     textarea {
       width: 100%;
+      box-sizing: border-box; /* Prevents overflow */
       margin-top: 10px;
       padding: 14px;
       border-radius: 14px;
@@ -82,40 +87,42 @@
       color: #3a332d;
     }
 
-    textarea::placeholder {
-      color: #b0a295;
-      font-style: italic;
-    }
-
     textarea:focus {
       outline: none;
       border-color: #c2a383;
       background: #ffffff;
     }
 
+    .controls {
+      position: sticky;
+      top: 10px;
+      z-index: 100;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
     #saveBtn {
       background: linear-gradient(135deg, #c2a383, #a88768);
-      box-shadow: 0 6px 18px rgba(168,135,104,0.45);
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-      font-family: 'Inter', sans-serif;
-      padding: 10px 18px;
+      box-shadow: 0 6px 18px rgba(168,135,104,0.3);
+      padding: 12px 24px;
       font-size: 15px;
-      border-radius: 20px;
+      border-radius: 25px;
       border: none;
       color: white;
       font-weight: 600;
-    }
-
-    #saveBtn:active {
-      transform: scale(0.96);
-      box-shadow: 0 3px 10px rgba(168,135,104,0.35);
+      cursor: pointer;
     }
 
     #saveStatus {
-      font-weight: 500;
+      font-weight: 600;
       color: #6d8b6a;
       margin-top: 8px;
       display: none;
+      background: #eef5ed;
+      padding: 4px 12px;
+      border-radius: 10px;
+      display: inline-block;
+      visibility: hidden;
     }
   </style>
 </head>
@@ -128,8 +135,8 @@
     <strong>1 Thessalonians 5:11</strong>
   </div>
 
-  <div style="text-align:center; margin-bottom: 20px;">
-    <button id="saveBtn">💾 Save Progress</button>
+  <div class="controls">
+    <button id="saveBtn">💾 Save Progress</button><br>
     <div id="saveStatus">Saved ✓</div>
   </div>
 
@@ -166,11 +173,13 @@
 
     readings.forEach((reading, index) => {
       const day = index + 1;
-      const checked = localStorage.getItem(day${day}-done) === "true";
-      const note = localStorage.getItem(day${day}-note) || "";
+      // FIXED: Added backticks for template literals
+      const checked = localStorage.getItem(`day${day}-done`) === "true";
+      const note = localStorage.getItem(`day${day}-note`) || "";
 
       const div = document.createElement("div");
       div.className = "day";
+      div.id = `day-container-${day}`;
 
       div.innerHTML = `
         <h3>Day ${day}</h3>
@@ -184,34 +193,24 @@
         <textarea data-day="${day}" placeholder="Shared notes for today...">${note}</textarea>
       `;
 
-      const checkbox = div.querySelector("input");
-      const textarea = div.querySelector("textarea");
-
-      checkbox.addEventListener("change", () => {
-        localStorage.setItem(day${day}-done, checkbox.checked);
-      });
-
-      textarea.addEventListener("input", () => {
-        localStorage.setItem(day${day}-note, textarea.value);
-      });
-
       container.appendChild(div);
     });
 
+    // Save functionality
     document.getElementById("saveBtn").addEventListener("click", () => {
       document.querySelectorAll("input[type='checkbox']").forEach(cb => {
-        localStorage.setItem(day${cb.dataset.day}-done, cb.checked);
+        localStorage.setItem(`day${cb.dataset.day}-done`, cb.checked);
       });
 
       document.querySelectorAll("textarea").forEach(area => {
-        localStorage.setItem(day${area.dataset.day}-note, area.value);
+        localStorage.setItem(`day${area.dataset.day}-note`, area.value);
       });
 
       const status = document.getElementById("saveStatus");
-      status.style.display = "block";
+      status.style.visibility = "visible";
 
       setTimeout(() => {
-        status.style.display = "none";
+        status.style.visibility = "hidden";
       }, 2000);
     });
   </script>
